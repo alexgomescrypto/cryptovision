@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabaseClient';
 
 export default function Planos() {
   const planos = [
@@ -46,7 +48,8 @@ export default function Planos() {
 
   const handleAssinar = async (planId) => {
     
-
+    const session = await supabase.auth.getSession();
+    const user = session?.data?.session?.user;
     if (!user) {
       alert('Você precisa estar logado para assinar um plano.');
       return navigate('/login');
