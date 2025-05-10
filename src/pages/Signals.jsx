@@ -35,22 +35,58 @@ export default function Signals() {
     verificarAssinatura().then(buscarSinais);
   }, []);
 
-  if (loading) return <div className="p-6">Carregando sinais...</div>;
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-20">
+        <div className="container mx-auto px-6 text-center text-white">
+          <div className="animate-pulse">Loading signals...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Sinais Ativos</h1>
-      <ul className="space-y-4">
-        {sinais.map((sinal) => (
-          <li key={sinal.id} className="border p-4 rounded shadow">
-            <h2 className="font-semibold">{sinal.moeda}</h2>
-            <p>Entrada: {sinal.entry}</p>
-            <p>Alvo: {sinal.target} ({sinal.target_pct}%)</p>
-            <p>Stop: {sinal.stop} ({sinal.stop_pct}%)</p>
-            <p>Status: {sinal.status}</p>
-          </li>
-        ))}
-      </ul>
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-20">
+      <div className="container mx-auto px-6">
+        <h1 className="text-4xl font-bold text-white text-center mb-12">Active Signals</h1>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {sinais.map((sinal) => (
+            <div 
+              key={sinal.id} 
+              className="bg-gray-800 rounded-xl p-6 shadow-lg transform hover:scale-105 transition duration-300"
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-white">{sinal.moeda}</h2>
+                <span className={`px-3 py-1 rounded-full text-sm ${
+                  sinal.status === 'active' ? 'bg-green-500/20 text-green-400' :
+                  sinal.status === 'completed' ? 'bg-blue-500/20 text-blue-400' :
+                  'bg-red-500/20 text-red-400'
+                }`}>
+                  {sinal.status}
+                </span>
+              </div>
+              <div className="space-y-3 text-gray-300">
+                <div className="flex justify-between">
+                  <span>Entry:</span>
+                  <span className="font-semibold text-white">{sinal.entry}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Target:</span>
+                  <span className="font-semibold text-green-400">
+                    {sinal.target} ({sinal.target_pct}%)
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Stop:</span>
+                  <span className="font-semibold text-red-400">
+                    {sinal.stop} ({sinal.stop_pct}%)
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

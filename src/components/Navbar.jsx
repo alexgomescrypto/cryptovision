@@ -42,7 +42,6 @@ export default function Navbar() {
         <div className="flex justify-between items-center">
           <Link to="/" className="text-2xl font-bold">CoinVision</Link>
           
-          {/* Mobile menu button */}
           <button 
             className="md:hidden"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -52,7 +51,6 @@ export default function Navbar() {
             </svg>
           </button>
 
-          {/* Desktop menu */}
           <div className="hidden md:flex items-center space-x-6">
             <Link to="/" className="hover:text-blue-400 transition duration-300">Home</Link>
             <Link to="/planos" className="hover:text-blue-400 transition duration-300">Plans</Link>
@@ -79,7 +77,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 space-y-4">
             <Link to="/" className="block hover:text-blue-400">Home</Link>
