@@ -4,6 +4,7 @@ import axios from 'axios';
 export default function Planos() {
   const planos = [
     {
+      id: 'Basic',
       nome: 'Basic',
       preco: 'R$29/mês',
       moedas: '3 moedas',
@@ -15,6 +16,7 @@ export default function Planos() {
       ]
     },
     {
+      id: 'Pro',
       nome: 'Pro',
       preco: 'R$59/mês',
       moedas: '5 moedas',
@@ -27,6 +29,7 @@ export default function Planos() {
       ]
     },
     {
+      id: 'Premium',
       nome: 'Premium',
       preco: 'R$99/mês',
       moedas: '8+ moedas',
@@ -41,9 +44,17 @@ export default function Planos() {
     },
   ];
 
-  const handleAssinar = async (plano) => {
+  const handleAssinar = async (planId) => {
+    const session = await supabase.auth.getSession();
+    const user = session?.data?.session?.user;
+
+    if (!user) {
+      alert('Você precisa estar logado para assinar um plano.');
+      return navigate('/login');
+    }
+    
     try {
-      const response = await axios.post('https://cryptoapp-nhj9.onrender.com/api/create-checkout-session', { plan: plano });
+      const response = await axios.post('https://cryptoapp-nhj9.onrender.com/api/create-checkout-session', { plan: planId });
       window.location.href = response.data.url;
     } catch (error) {
       alert('Erro ao iniciar pagamento: ' + error.message);
