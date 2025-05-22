@@ -8,7 +8,7 @@ const router = express.Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 router.post('/create-checkout-session', async (req, res) => {
-  const { plan } = req.body;
+  const { plan, email } = req.body;
 
   const prices = {
     Basic: 'price_1RLzEUC5hAPyaQqJVZhJRRrj',     // Substitua pelos IDs reais da Stripe
@@ -23,13 +23,14 @@ router.post('/create-checkout-session', async (req, res) => {
   try {
     console.log("Criando checkout para plano:", plan, "com price_id:", prices[plan]);
     const session = await stripe.checkout.sessions.create({
+      customer_email: email,
       payment_method_types: ['card'],
       line_items: [{
         price: prices[plan],
         quantity: 1,
       }],
       mode: 'subscription',
-      success_url: 'http://localhost:5173/sinais',
+      success_url: 'http://localhost:5173/signals',
       cancel_url: 'http://localhost:5173/planos',
       metadata: {
       plano: plan

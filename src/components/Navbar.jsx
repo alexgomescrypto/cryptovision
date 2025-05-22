@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 
+
 export default function Navbar() {
   const [userEmail, setUserEmail] = useState(null);
   const [plano, setPlano] = useState('Sem Plano');
@@ -10,27 +11,44 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => {
-    const getUser = async () => {
-      const { data: sessionData } = await supabase.auth.getUser();
-      const user = sessionData.user;
-      if (user) {
-        setUserEmail(user.email);
+  const fetchUserAndPlano = async (user) => {
+    setUserEmail(user.email);
 
-        const { data, error } = await supabase
-          .from('assinaturas')
-          .select('plano')
-          .eq('email', user.email)
-          .eq('status', 'ativo')
-          .maybeSingle();
+    const { data, error } = await supabase
+      .from('assinaturas')
+      .select('plano')
+      .eq('email', user.email)
+      .eq('status', 'ativo')
+      .maybeSingle();
 
-        if (data && data.plano) {
-          setPlano(data.plano);
-        }
-      }
-    };
+    if (data?.plano) {
+      setPlano(data.plano);
+    } else {
+      setPlano('Sem Plano');
+    }
+  };
 
-    getUser();
-  }, []);
+  // Chamada inicial ao montar
+  supabase.auth.getUser().then(({ data: sessionData }) => {
+    const user = sessionData.user;
+    if (user) fetchUserAndPlano(user);
+  });
+
+  // Escuta mudanças de login/logout
+  const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+      fetchUserAndPlano(session.user);
+    } else {
+      setUserEmail(null);
+      setPlano('Sem Plano');
+    }
+  });
+
+  // Limpa o listener ao desmontar o componente
+  return () => {
+    listener.subscription.unsubscribe();
+  };
+}, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

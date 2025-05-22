@@ -14,6 +14,10 @@ const supabase = createClient(
   process.env.YOUR_SUPABASE_SERVICE_ROLE_KEY // precisa da chave com permissões de escrita
 );
 
+// console.log("Chave Supabase URL", process.env.YOUR_SUPABASE_URL);
+// console.log("Chave Supabase Key", process.env.YOUR_SUPABASE_SERVICE_ROLE_KEY);
+// console.log("Chave Stripe key", process.env.STRIPE_SECRET_KEY);
+
 // 🚨 bodyParser precisa ser raw!
 router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
